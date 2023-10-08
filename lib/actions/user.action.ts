@@ -47,8 +47,8 @@ export async function UpdateUser(
 }
 
 export async function getUser(userId: string) {
+    connectToDB();
     try {
-        connectToDB();
         return await User
             .findOne({id: userId})
             // .populate({
