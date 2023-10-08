@@ -16,10 +16,9 @@ import * as z from "zod";
 import { ThreadValidation } from "@/lib/validations/thread";
 
 import { usePathname, useRouter } from "next/navigation";
-import createThread from "@/lib/actions/thread.action";
+import { createThread } from "@/lib/actions/thread.action";
 
-export default function PostThreads({userId}: {userId: string}) {
-
+export default function PostThreads({ userId }: { userId: string }) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -34,7 +33,7 @@ export default function PostThreads({userId}: {userId: string}) {
   const onSubmit = async (values: z.infer<typeof ThreadValidation>) => {
     await createThread({
       text: values.thread,
-      author: userId,
+      author: JSON.parse(userId),
       communityId: null,
       path: pathname
     });
