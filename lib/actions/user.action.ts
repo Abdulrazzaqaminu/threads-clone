@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import User from "../models/user.model";
 import { connectToDB } from "../mongoose";
+import Thread from "../models/thread.model";
 
 interface Params {
     userId: string;
@@ -23,9 +24,8 @@ export async function UpdateUser(
         path
     }: Params
 ): Promise<void> {
-    connectToDB();
-
     try {
+        connectToDB();
         await User.findOneAndUpdate(
             { id: userId },
             {
@@ -47,8 +47,8 @@ export async function UpdateUser(
 }
 
 export async function getUser(userId: string) {
-    connectToDB();
     try {
+        connectToDB();
         return await User
             .findOne({id: userId})
             // .populate({
@@ -57,5 +57,28 @@ export async function getUser(userId: string) {
             // });
     } catch (error: any) {
         throw new Error(`Failed to get user: ${error.message}`)
+    }
+}
+
+export async function getUserThreads(userId: string) {
+    try {
+        connectToDB();
+        const threads = await User.findOne({id: userId})
+            .populate({
+                path: "threads",
+                model: Thread,
+                populate: {
+                    path: "children",
+                    model: Thread,
+                    populate: {
+                        path: "author",
+                        model: User,
+                        select: "name image id"
+                    }
+                }
+            });
+        return threads;
+    } catch (error: any) {
+        throw new Error(`Failed to get user threads: ${error.message}`)
     }
 }

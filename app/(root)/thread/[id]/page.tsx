@@ -12,7 +12,7 @@ export default async function ThreadPage({ params }: { params: { id: string } })
     if(!user) return null;
 
     const userInfo = await getUser(user?.id);
-    if(!userInfo?.onboarded) redirect("/onboarded");
+    if(!userInfo?.onboarded) redirect("/onboarding");
 
     const thread = await getThreadById(params?.id)
 
