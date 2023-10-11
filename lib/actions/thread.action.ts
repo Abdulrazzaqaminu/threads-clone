@@ -20,9 +20,8 @@ interface Props {
 }
 
 export async function createThread({ text, author, communityId, path }: Params) {
-  connectToDB();
-
   try {
+    connectToDB();
     const createdThread = await Thread.create({
         text,
         author,
@@ -40,9 +39,8 @@ export async function createThread({ text, author, communityId, path }: Params) 
 }
 
 export async function getThreads(pageNumber = 1, pageSize = 20) {
-  connectToDB();
-
   try {
+    connectToDB();
     const skipAmount = (pageNumber - 1) * pageSize;
   
     const threadsQuery = Thread.find({parentId: { $in: [ null, undefined] }})
@@ -72,9 +70,8 @@ export async function getThreads(pageNumber = 1, pageSize = 20) {
 }
 
 export async function getThreadById(id: string) {
-  connectToDB();
-
   try {
+    connectToDB();
     const thread = await Thread.findById(id)
       .populate({
         path: "author",
@@ -113,9 +110,8 @@ export async function addCommentToThread({
   userId,
   path
 }: Props) {
-  connectToDB();
-
   try {
+    connectToDB();
     const originalThread = await Thread.findById(threadId);
 
     if(!originalThread) {
