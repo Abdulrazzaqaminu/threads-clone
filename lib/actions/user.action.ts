@@ -133,3 +133,28 @@ export async function searchUser({
         throw new Error(`Failed to get users: ${error.message}`)
     }
 }
+
+export async function activities(userId: string) {
+    try {
+        connectToDB();
+
+        const userThreads = await Thread.find({ author: userId });
+
+        const childThreadsIds = userThreads.reduce((acc, userThread) => {
+            return acc.concat(userThread.children);
+        }, []);
+
+        const replies = await Thread.find({
+            _id: { $in: childThreadsIds },
+            author: { $ne: userId }
+        }).populate({
+            path: "author",
+            model: User,
+            select: "name image _id"
+        });
+
+        return replies;
+    } catch (error) {
+        throw new Error(`Failed to get replies`);
+    }
+}
